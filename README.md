@@ -1,8 +1,6 @@
 # GoGrok (Work in progress)
 
-A lightweight Go client for the Grok API, focusing on chat completions with streaming support.
-
-## Quick Start
+A lightweight feature-complete Go client for the Grok API.
 
 ### Installation
 
