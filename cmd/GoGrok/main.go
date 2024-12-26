@@ -32,13 +32,13 @@ func (h *chatHandler) OnComplete() {
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:   "grokling",
+		Use:   "gogrok",
 		Short: "A CLI tool for interacting with Grok API",
 	}
 
 	setupCmd := &cobra.Command{
 		Use:   "setup",
-		Short: "Setup Grokling with your API key",
+		Short: "Setup GoGrok with your API key",
 		Run: func(cmd *cobra.Command, args []string) {
 			reader := bufio.NewReader(os.Stdin)
 			fmt.Print("Enter your xAI API key: ")
@@ -62,7 +62,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			// Try to load .env file
 			if err := godotenv.Load(); err != nil {
-				fmt.Fprintf(os.Stderr, "Error loading .env file. Run 'grokling setup' first.\n")
+				fmt.Fprintf(os.Stderr, "Error loading .env file. Run 'gogrok setup' first.\n")
 				os.Exit(1)
 			}
 
