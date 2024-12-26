@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 
 	"GoGrok/pkg/types"
+	"github.com/joho/godotenv"
 )
 
 // StreamHandler defines the interface for handling stream events
@@ -17,6 +19,23 @@ type StreamHandler interface {
 	OnContent(content string)
 	OnError(err error)
 	OnComplete()
+}
+
+// ClientOption is a function that modifies a Client
+type ClientOption func(*Client)
+
+// WithBaseURL sets a custom base URL for the client
+func WithBaseURL(url string) ClientOption {
+	return func(c *Client) {
+		c.baseURL = url
+	}
+}
+
+// WithHTTPClient sets a custom HTTP client
+func WithHTTPClient(httpClient *http.Client) ClientOption {
+	return func(c *Client) {
+		c.httpClient = httpClient
+	}
 }
 
 // Client represents the Grok API client
@@ -27,12 +46,29 @@ type Client struct {
 }
 
 // NewClient creates a new Grok API client
-func NewClient(apiKey string) *Client {
-	return &Client{
+func NewClient(options ...ClientOption) (*Client, error) {
+	// Load .env file from the current directory
+	if err := godotenv.Load(); err != nil {
+		return nil, fmt.Errorf("error loading .env file: %w", err)
+	}
+
+	apiKey := os.Getenv("XAI_API_KEY")
+	if apiKey == "" {
+		return nil, fmt.Errorf("XAI_API_KEY not found in environment variables")
+	}
+
+	client := &Client{
 		apiKey:     apiKey,
 		baseURL:    "https://api.x.ai/v1",
 		httpClient: &http.Client{},
 	}
+
+	// Apply options
+	for _, option := range options {
+		option(client)
+	}
+
+	return client, nil
 }
 
 // StreamChat initiates a streaming chat completion request
